@@ -1,24 +1,11 @@
 import HeaderBox from '@/components/HeaerBox'
 import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
+import { getLoggedInUser } from '@/lib/actions/user.actions';
 import React from 'react'
 
-const Home = () => {
-    const loggedIn: User = {
-        firstName: 'Amirreza',
-        lastName: 'Ya',
-        email: 'a@b.com',
-        $id: '1',
-        address1: '123 Main St',
-        city: 'Melbourne',
-        dateOfBirth: '1980-01-01',
-        dwollaCustomerId: '1',
-        dwollaCustomerUrl: '1',
-        postalCode: '3000',
-        ssn: '123-45-6789',
-        state: 'VIC',
-        userId: '1'
-    };
+const Home = async () => {
+    const loggedIn = await getLoggedInUser();
     return (
         <section className='home'>
             <div className='home-content'>
@@ -26,7 +13,7 @@ const Home = () => {
                     <HeaderBox
                         type='greeting'
                         title='Welcome,'
-                        user={loggedIn?.firstName || 'Guest'}
+                        user={loggedIn?.name || 'Guest'}
                         subtext='What would you like to do? ... Access your accounts, send money, receive money, or view your transaction history.'
                     />
                     <TotalBalanceBox
