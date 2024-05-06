@@ -1,11 +1,21 @@
 import HeaderBox from '@/components/HeaerBox'
+import RecentTransactions from '@/components/RecentTransactions';
 import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
+import { getAccounts, getAccount } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 import React from 'react'
+import { string } from 'zod';
 
-const Home = async () => {
+const Home = async ({ searchParams: { id, page } }: SearchParamProps) => {
+    const currentPage = Number(page as string) || 1;
     const loggedIn = await getLoggedInUser();
+    const accounts = await getAccounts({ userId: loggedIn.$id })
+    if (!accounts) return;
+    const accountsData = accounts?.data;
+    const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
+
+    const account = await getAccount({ appwriteItemId })
     return (
         <section className='home'>
             <div className='home-content'>
@@ -13,21 +23,26 @@ const Home = async () => {
                     <HeaderBox
                         type='greeting'
                         title='Welcome,'
-                        user={loggedIn?.name || 'Guest'}
+                        user={loggedIn?.firstName || 'Guest'}
                         subtext='What would you like to do? ... Access your accounts, send money, receive money, or view your transaction history.'
                     />
                     <TotalBalanceBox
-                        accounts={[]}
-                        totalBanks={1}
-                        totalCurrentBalance={15320.00}
+                        accounts={accountsData}
+                        totalBanks={accounts?.totalBanks}
+                        totalCurrentBalance={accounts?.totalCurrentBalance}
                     />
                 </header>
-                RECENT TRANSACTIONS
+                <RecentTransactions
+                    accounts={accountsData}
+                    transactions={account?.transactions}
+                    appwriteItemId={appwriteItemId}
+                    page={currentPage}
+                />
             </div>
             <RightSidebar
                 user={loggedIn}
                 transactions={[]}
-                banks={[{ currentBalance: 12500.0 }, { currentBalance: 12500.0 }]}
+                banks={[accountsData?.slice(0, 2)]}
             />
         </section>
     )
