@@ -1,4 +1,4 @@
-import HeaderBox from '@/components/HeaerBox'
+import HeaderBox from '@/components/HeaedrBox'
 import RecentTransactions from '@/components/RecentTransactions';
 import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
